@@ -61,8 +61,9 @@ while True:
         counter_ai = 5
         ret, image = camera.read()
         
-        ai_result = simpleAI.image_detector(image)
+        if (ret):
+            ai_result = simpleAI.image_detector(image)
 
-        print("AI Output: ", ai_result)
-        client.publish("ai", ai_result)
+            print("AI Output: ", ai_result)
+            client.publish("ai", ai_result)
     time.sleep(1)
