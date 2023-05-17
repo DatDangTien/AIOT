@@ -4,6 +4,7 @@ import simpleAI
 import random
 import time
 import cv2
+from enum import Enum
 
 AIO_FEED_ID = ["nutnhan1", "nutnhan2"]
 AIO_USERNAME = "thunha"
@@ -31,34 +32,46 @@ client.on_message = message
 client.on_subscribe = subscribe
 client.connect()
 client.loop_background()
-counter = 3
-sensor_type = 0
-counter_ai = 5
+
+# type
+class Sensor(Enum):
+    TEMP = 0
+    HUMID = 1
+    LIGHT = 2
+sensor_type = Sensor.TEMP
+
+# Time in loop
+sensor_time = 3
+ai_time = 5
+reset_time = 0
+counter = sensor_time
+counter_ai = ai_time
+
 camera = cv2.VideoCapture(0)
 
 while True:
     counter -= 1
-    if counter <= 0:
-        counter = 3
+    if counter <= reset_time:
+        counter = sensor_time
         print("Random data is publishing...")
-        if sensor_type == 0:
+        if sensor_type == Sensor.TEMP:
             print("Temperature...")
             temp = random.randint(10, 20)
             client.publish("cambien1", temp)
-            sensor_type = 1
-        elif sensor_type == 1:
+            sensor_type = Sensor.HUMID
+        elif sensor_type == Sensor.HUMID:
             print("Humidity...")
             humi = random.randint(50, 70)
             client.publish("cambien2", humi)
-            sensor_type = 2
-        elif sensor_type == 2:
+            sensor_type = Sensor.LIGHT
+        elif sensor_type == Sensor.LIGHT:
             print("Light...")
             light = random.randint(100, 500)
             client.publish("cambien3", light)
-            sensor_type = 0
+            sensor_type = Sensor.TEMP
     counter_ai -= 1
-    if counter_ai <= 0:
-        counter_ai = 5
+    if counter_ai <= reset_time:
+        counter_ai = ai_time
         ret, image = camera.read()
         
         if (ret):
