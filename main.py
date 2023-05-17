@@ -37,7 +37,7 @@ counter_ai = 5
 camera = cv2.VideoCapture(0)
 
 while True:
-    counter = counter - 1
+    counter -= 1
     if counter <= 0:
         counter = 3
         print("Random data is publishing...")
